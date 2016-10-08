@@ -47,13 +47,9 @@ def Ustvnow(user, password):
             link = str(tag['src'])
             m3u8playlist += "#EXTINF:-1," + station + "\n"
             m3u8playlist += link+ "\n"
+            f = open(station+".strm","w")
+            f.write(link)
+            f.close()
     return m3u8playlist.rstrip("\n")
 
-###########################
-######### MAIN ############
-###########################
-
-# Simply replace with your login details
-
-print Ustvnow("Youur username", "Your password")
-
+print Ustvnow("YOUR USERNAME", "YOUR PASSWORD")
