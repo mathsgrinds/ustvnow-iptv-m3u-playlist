@@ -3,7 +3,7 @@ import cookielib
 from bs4 import BeautifulSoup
 import json
 
-def Ustvnow(user, password):
+def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]):
     cj = cookielib.CookieJar()
     url = "http://m.ustvnow.com/iphone/1/live/login"
     payload = {'username': user, 'password': password, 'device':'gtv', 'redir':'0'}
@@ -13,7 +13,7 @@ def Ustvnow(user, password):
     j = json.loads(html)
     token = j['token']
     m3u8playlist =  "#EXTM3U\n"
-    for station in ["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]:
+    for station in stations:
         cj = cookielib.CookieJar()
         url = "http://m.ustvnow.com/iphone/1/live/login"
         payload = {'username': user, 'password': password, 'device':'gtv', 'redir':'0'}
