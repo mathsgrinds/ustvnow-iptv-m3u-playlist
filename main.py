@@ -47,9 +47,12 @@ def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "
             link = str(tag['src'])
             m3u8playlist += "#EXTINF:-1," + station + "\n"
             m3u8playlist += link+ "\n"
-            f = open(station+".strm","w")
-            f.write(link)
-            f.close()
+            try:
+                f = open(station+".strm","w")
+                f.write(link)
+                f.close()
+            except:
+                pass
     return m3u8playlist.rstrip("\n")
 
 print Ustvnow("YOUR USERNAME", "YOUR PASSWORD")
