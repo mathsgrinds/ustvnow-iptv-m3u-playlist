@@ -55,4 +55,4 @@ def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "
                 pass
     return m3u8playlist.rstrip("\n")
 
-print Ustvnow("YOUR USERNAME", "YOUR PASSWORD")
+print(Ustvnow("YOUR USERNAME", "YOUR PASSWORD"))
