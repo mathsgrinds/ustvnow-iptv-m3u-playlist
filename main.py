@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import json
 
 def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]):
+    d = {}
     cj = cookielib.CookieJar()
     url = "http://m.ustvnow.com/iphone/1/live/login"
     payload = {'username': user, 'password': password, 'device':'gtv', 'redir':'0'}
@@ -13,29 +14,29 @@ def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "
     j = json.loads(html)
     token = j['token']
     m3u8playlist =  "#EXTM3U\n"
+    cj = cookielib.CookieJar()
+    url = "http://m.ustvnow.com/iphone/1/live/login"
+    payload = {'username': user, 'password': password, 'device':'gtv', 'redir':'0'}
+    with requests.Session() as s:
+        r = s.post(url, data=payload)
+        R = s.get("http://m.ustvnow.com/iphone/1/live/playingnow")
+    html = R.text
+    try:
+        soup = BeautifulSoup(html,"lxml")
+    except:
+        soup = BeautifulSoup(html)
+    for tag in soup.findAll('div'):
+        if tag.has_attr('sname'):
+            sname = tag["sname"]
+            sname = sname.replace(" ","")
+            title = ' '.join(html.split())
+            title = title[ title.find(sname) : title.find(sname) + 200 ]
+            title = title[ title.find("<h1>") + 4 : title.find("</h1>")]
+            title = title.replace(" ","")
+            d[title]=sname
+
     for station in stations:
-        cj = cookielib.CookieJar()
-        url = "http://m.ustvnow.com/iphone/1/live/login"
-        payload = {'username': user, 'password': password, 'device':'gtv', 'redir':'0'}
-        with requests.Session() as s:
-            r = s.post(url, data=payload)
-            R = s.get("http://m.ustvnow.com/iphone/1/live/playingnow")
-        html = R.text
-        try:
-            soup = BeautifulSoup(html,"lxml")
-        except:
-            soup = BeautifulSoup(html)
-        for tag in soup.findAll('div'):
-            try:          
-               sname = tag["sname"]
-               if "content" in tag['id']: # THIS -IF- BLOCK IS SO UGLY :P YUCK
-                   chunk = html[ html.find(sname) : html.find(sname) + 200 ]
-                   chunk = ' '.join(chunk.split())
-                   if "<h1>"+station+"</h1>" in chunk:
-                       break # I'M GLAD THAT'S OVER :)
-            except:
-                pass
-        url = "http://m.ustvnow.com/iphone/1/live/viewlive?streamname="+sname+"&stream_origin=ilv10.oedg.ustvnow.com&app_name=ilv10&token="+token+"&passkey=tbd&extrato=tbd"
+        url = "http://m.ustvnow.com/iphone/1/live/viewlive?streamname="+d[station]+"&stream_origin=ilv10.oedg.ustvnow.com&app_name=ilv10&token="+token+"&passkey=tbd&extrato=tbd"
         r = s.get(url)
         html =  r.text
         try:
@@ -55,4 +56,4 @@ def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "
                 pass
     return m3u8playlist.rstrip("\n")
 
-print(Ustvnow("YOUR USERNAME", "YOUR PASSWORD"))
+print(Ustvnow("YOUR USERNAME","YOUR PASSWORD"))
