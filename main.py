@@ -1,9 +1,13 @@
+import sys
 import requests
 import cookielib
 from bs4 import BeautifulSoup
 import json
 
-def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]):
+def Ustvnow(user, password, free_or_all):
+    stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]
+    if free_or_all == 'all':
+        stations.extend(["AETV", "AMC", "Animal Planet", "Bravo", "Cartoon Network", "CNBC", "CNN", "Comedy Central", "Discovery Channel", "ESPN", "Fox News Channel", "FX", "History", "Lifetime", "National Geographic Channel", "Nickelodeon", "SPIKE TV", "Syfy", "TBS", "TNT", "USA"])
     d = {}
     cj = cookielib.CookieJar()
     url = "http://m.ustvnow.com/iphone/1/live/login"
@@ -24,7 +28,7 @@ def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "
     try:
         soup = BeautifulSoup(html,"lxml")
     except:
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html,"html.parser")
     for tag in soup.findAll('div'):
         if tag.has_attr('sname'):
             sname = tag["sname"]
@@ -34,15 +38,15 @@ def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "
             title = title[ title.find("<h1>") + 4 : title.find("</h1>")]
             title = title.replace(" ","")
             d[title]=sname
-
     for station in stations:
+        station = station.replace(" ","")
         url = "http://m.ustvnow.com/iphone/1/live/viewlive?streamname="+d[station]+"&stream_origin=ilv10.oedg.ustvnow.com&app_name=ilv10&token="+token+"&passkey=tbd&extrato=tbd"
         r = s.get(url)
         html =  r.text
         try:
             soup = BeautifulSoup(html,"lxml")
         except:
-            soup = BeautifulSoup(html)
+            soup = BeautifulSoup(html,"html.parser")
         link = "None"
         for tag in  soup.findAll('video'):
             link = str(tag['src'])
@@ -56,4 +60,11 @@ def Ustvnow(user, password, stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "
                 pass
     return m3u8playlist.rstrip("\n")
 
-print(Ustvnow("YOUR USERNAME","YOUR PASSWORD"))
+if len(sys.argv) == 4:
+    username = sys.argv[1]
+    password = sys.argv[2]
+    free_or_all = sys.argv[3]
+
+    print(Ustvnow(username,password,free_or_all))
+else:
+    print("Usage: python main.py [username] [password] [free|all]")
