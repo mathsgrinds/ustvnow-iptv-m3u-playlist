@@ -4,7 +4,7 @@ import cookielib
 from bs4 import BeautifulSoup
 import json
 
-def Ustvnow(user, password, free_or_all):
+def Ustvnow(user , password, free_or_all = "free"):
     stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]
     if free_or_all == 'all':
         stations.extend(["AETV", "AMC", "Animal Planet", "Bravo", "Cartoon Network", "CNBC", "CNN", "Comedy Central", "Discovery Channel", "ESPN", "Fox News Channel", "FX", "History", "Lifetime", "National Geographic Channel", "Nickelodeon", "SPIKE TV", "Syfy", "TBS", "TNT", "USA"])
@@ -25,18 +25,19 @@ def Ustvnow(user, password, free_or_all):
         r = s.post(url, data=payload)
         R = s.get("http://m.ustvnow.com/iphone/1/live/playingnow")
     html = R.text
+    html = ' '.join(html.split())
     try:
         soup = BeautifulSoup(html,"lxml")
     except:
         soup = BeautifulSoup(html,"html.parser")
     for tag in soup.findAll('div'):
         if tag.has_attr('sname'):
-            sname = tag["sname"]
-            sname = sname.replace(" ","")
-            title = ' '.join(html.split())
-            title = title[ title.find(sname) : title.find(sname) + 200 ]
-            title = title[ title.find("<h1>") + 4 : title.find("</h1>")]
-            title = title.replace(" ","")
+            try:
+                smallsoup = BeautifulSoup(str(tag),"lxml")
+            except:
+                smallsoup = BeautifulSoup(str(tag),"html.parser")
+            sname = tag["sname"].replace(" ","")
+            title = smallsoup.find('h1').text.replace(" ","")
             d[title]=sname
     for station in stations:
         station = station.replace(" ","")
@@ -65,6 +66,6 @@ if len(sys.argv) == 4:
     password = sys.argv[2]
     free_or_all = sys.argv[3]
 
-    print(Ustvnow(username,password,free_or_all))
+    print(Ustvnow(username, password, free_or_all))
 else:
     print("Usage: python main.py [username] [password] [free|all]")
