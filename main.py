@@ -4,7 +4,18 @@ import cookielib
 from bs4 import BeautifulSoup
 import json
 
-def Ustvnow(user , password, free_or_all = "free"):
+#############
+# READ THIS #
+##################################################################################################################
+# If yout put your username and password here than the script will run automatically and not require an input. ###
+username = ""
+password = ""
+free_or_all = "free"
+# Otherwise you will need to pass the username and password, for example if you run:                           ###
+# python main.py username password free                                                                        ###
+##################################################################################################################
+
+def Ustvnow(user, password, free_or_all = "free"):
     stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]
     if free_or_all == 'all':
         stations.extend(["AETV", "AMC", "Animal Planet", "Bravo", "Cartoon Network", "CNBC", "CNN", "Comedy Central", "Discovery Channel", "ESPN", "Fox News Channel", "FX", "History", "Lifetime", "National Geographic Channel", "Nickelodeon", "SPIKE TV", "Syfy", "TBS", "TNT", "USA"])
@@ -61,11 +72,13 @@ def Ustvnow(user , password, free_or_all = "free"):
                 pass
     return m3u8playlist.rstrip("\n")
 
-if len(sys.argv) == 4:
-    username = sys.argv[1]
-    password = sys.argv[2]
-    free_or_all = sys.argv[3]
-
-    print(Ustvnow(username, password, free_or_all))
+if username == "" and password == "":
+    if len(sys.argv) == 4:
+        username = sys.argv[1]
+        password = sys.argv[2]
+        free_or_all = sys.argv[3]
+        print(Ustvnow(username, password, free_or_all))
+    else:
+        print("Usage: python main.py [username] [password] [free|all]")
 else:
-    print("Usage: python main.py [username] [password] [free|all]")
+    print(Ustvnow(username, password, free_or_all))
