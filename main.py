@@ -4,13 +4,13 @@ import cookielib
 from bs4 import BeautifulSoup
 import json
 
-#############
-# READ THIS #
+###############
+#  READ THIS  #
 ##################################################################################################################
-# If yout put your username and password here than the script will run automatically and not require an input. ###
+# If you put your username and password here then the script will run automatically and not require an input.  ###
 username = ""
 password = ""
-free_or_all = "free"
+free_or_all = "free"                                                                                           ###
 # Otherwise you will need to pass the username and password, for example if you run:                           ###
 # python main.py username password free                                                                        ###
 ##################################################################################################################
