@@ -66,9 +66,9 @@ def Ustvnow(user, password, free_or_all = "free"):
                     i = json.loads(html)
                     print "#EXTINF:-1,"+stream_code
                     print i["stream"]+"\n"
-                    n += 1
             except:
                 break
+            n += 1
         ### Done ###
         
 Ustvnow(username, password, free_or_all)
