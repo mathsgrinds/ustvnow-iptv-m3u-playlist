@@ -3,19 +3,15 @@ import requests
 import cookielib
 import re
 import json
+import os
 
 ##################################################################################################################
-# If you put your username and password here then the script will run automatically and not require an input.
-username = ""
-password = ""
-free_or_all = "free"
+username = "YOUR USERNAME HERE"
+password = "YOUR PASSWORD HERE"
 ##################################################################################################################
  
-def Ustvnow(user, password, free_or_all = "free"):
-    stations=["ABC", "CBS", "CW", "FOX", "NBC", "PBS", "My9"]
-    if free_or_all == 'all':
-        stations.extend(["AETV", "AMC", "Animal Planet", "Bravo", "Cartoon Network", "CNBC", "CNN", "Comedy Central", "Discovery Channel", "ESPN", "Fox News Channel", "FX", "History", "Lifetime", "National Geographic Channel", "Nickelodeon", "SPIKE TV", "Syfy", "TBS", "TNT", "USA"])
-   
+def Ustvnow(user, password):
+    #START
     with requests.Session() as s:
         ### Get CSRF Token ###       
         url="https://watch.ustvnow.com/account/signin"
@@ -28,8 +24,6 @@ def Ustvnow(user, password, free_or_all = "free"):
             if '<input type="hidden" name="csrf_ustvnow" value="' in i:
                 csrf = i.replace('<input type="hidden" name="csrf_ustvnow" value="','').replace('">','')
                 csrf = str(csrf).replace("u'","").replace("'","")
-        ### Done ###
-
         ### Get Token ###
         url = "https://watch.ustvnow.com/account/login"
         payload = {'csrf_ustvnow': csrf, 'signin_email': user, 'signin_password':password, 'signin_remember':'1'}
@@ -39,8 +33,6 @@ def Ustvnow(user, password, free_or_all = "free"):
         html = html[html.find('var token = "')+len('var token = "'):]
         html = html[:html.find(';')-1]
         token = str(html)
-        ### Done ###
-
         ### Get Stream ###
         device = "gtv"        
         url = "http://m-api.ustvnow.com/"+device+"/1/live/login"
@@ -56,19 +48,29 @@ def Ustvnow(user, password, free_or_all = "free"):
         n = 0
         print "#EXTM3U\n"
         while True:
+            # Print Links
+            scode = j['results'][n]['scode']
+            stream_code = j['results'][n]['stream_code']
+            url = "http://m.ustvnow.com/stream/1/live/view?scode="+scode+"&token="+token+"&br_n=Firefox&br_v=54&br_d=desktop"
+            r = s.get(url)
+            html = r.text
             try:
-                scode = j['results'][n]['scode']
-                stream_code = j['results'][n]['stream_code']
-                if stream_code in stations:
-                    url = "http://m.ustvnow.com/stream/1/live/view?scode="+scode+"&token="+token+"&br_n=Firefox&br_v=54&br_d=desktop"
-                    r = s.get(url)
-                    html = r.text
-                    i = json.loads(html)
-                    print "#EXTINF:-1,"+stream_code
-                    print i["stream"]+"\n"
+                i = json.loads(html)
             except:
                 break
+            print "#EXTINF:-1,"+stream_code
+            print i["stream"]+"\n"
+            # Create STRM file
+            fname = stream_code+".strm"
+            if os.path.isfile(fname):
+                f= open(fname,"w")
+                f.write(i["stream"])
+                f.close
+            else:
+                f= open(fname,"w+")
+                f.write(i["stream"])
+                f.close
             n += 1
-        ### Done ###
-        
-Ustvnow(username, password, free_or_all)
+        #END 
+         
+Ustvnow(username, password)
