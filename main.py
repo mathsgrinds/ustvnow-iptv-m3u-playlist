@@ -6,8 +6,8 @@ import json
 import os
 
 ##################################################################################################################
-username = "YOUR USERNAME HERE"
-password = "YOUR PASSWORD HERE"
+username = ""
+password = ""
 ##################################################################################################################
  
 def Ustvnow(user, password):
@@ -51,6 +51,9 @@ def Ustvnow(user, password):
             # Print Links
             scode = j['results'][n]['scode']
             stream_code = j['results'][n]['stream_code']
+            title = j['results'][n]['title']
+            print stream_code
+            print title
             url = "http://m.ustvnow.com/stream/1/live/view?scode="+scode+"&token="+token+"&br_n=Firefox&br_v=54&br_d=desktop"
             r = s.get(url)
             html = r.text
