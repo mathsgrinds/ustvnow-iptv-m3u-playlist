@@ -5,10 +5,11 @@ Enjoy :)
 
 ## CLI Usage Examples:
 
-Get link for CBS
+###Get link for CBS
 python ustvnow-iptv-m3u-playlist.py 'username' 'password' 'CBS';
 
-Get link for ALL stations
+###Get link for ALL stations
 python ustvnow-iptv-m3u-playlist.py 'username' 'password' 'ALL';
 
+### Non Command Line Interface
 It is possible just to input the username and passwords into the python file and generate playlists and strm files
