@@ -7,22 +7,29 @@ import os
 import sys
 
 ##################################################################################################################
+# CONFIG
+##################################################################################################################
 try:
     username = sys.argv[1]
 except:
-    username = "" # Set username manually here if not using the command line
+    username = ""                       # Set username manually here if not using the command line
 
 try:
     password = sys.argv[2]
 except:
-    password = "" # Set username manually here if not using the command line
+    password = ""                       # Set username manually here if not using the command line
 
 try:
     channel = sys.argv[3]
 except:
-    channel = "" # Set channel manually here if not using the command line (use ALL to show all)
+    channel = "ALL"                     # Set channel manually here if not using the command line (use ALL to show all)
 
-CreateSTRM = True
+CreateSTRM = False                      # Set if you would like to create the STRM file
+
+quality = "HD"                          # Set the quality either SD or HD
+
+ext="ts"                                # Set to either ts or m3u8
+
 ##################################################################################################################
  
 def Ustvnow(user, password):
@@ -77,20 +84,50 @@ def Ustvnow(user, password):
                 break
             if channel=="ALL":
                 print "#EXTINF:-1,"+stream_code+" - "+title
-                print i["stream"]+"\n"
+                #GET LINK for M3U
+                URL = i["stream"].replace("\n","")[:-1]
+                if quality=="HD" and stream_code != "My9":
+                    URL = URL.replace("xxx","xxe").replace("USTVNOW1","USTVNOW4")
+                #GET LINK for TS
+                if ext=="ts" and stream_code != "My9":
+                    R = s.get(URL.replace("playlist","chunklist"))
+                    HTML = R.text.splitlines()[5]
+                    URL = URL.split("playlist",1)[0]+HTML
+                #PRINT LINK
+                print URL
             else:
                 if channel==stream_code:
-                    print i["stream"].replace("\n","")
+                    #GET LINK
+                    URL = i["stream"].replace("\n","")[:-1]
+                    if quality=="HD" and stream_code != "My9":
+                        URL = URL.replace("xxx","xxe").replace("USTVNOW1","USTVNOW4")
+                    #GET LINK TS
+                    if ext=="ts" and stream_code != "My9":
+                        R = s.get(URL.replace("playlist","chunklist"))
+                        HTML = R.text.splitlines()[5]
+                        URL = URL.split("playlist",1)[0]+HTML
+                    #PRINT LINK
+                    print URL
             # Create STRM file
             if(CreateSTRM):
                 fname = stream_code+".strm"
+                #GET LINK
+                URL = i["stream"].replace("\n","")[:-1]
+                if quality=="HD" and stream_code != "My9":
+                    URL = URL.replace("xxx","xxe").replace("USTVNOW1","USTVNOW4")
+                #GET LINK TS
+                if ext=="ts" and stream_code != "My9":
+                    R = s.get(URL.replace("playlist","chunklist"))
+                    HTML = R.text.splitlines()[5]
+                    URL = URL.split("playlist",1)[0]+HTML
+                #SAVE LINK
                 if os.path.isfile(fname):
                     f= open(fname,"w")
-                    f.write(i["stream"])
+                    f.write(URL)
                     f.close
                 else:
                     f= open(fname,"w+")
-                    f.write(i["stream"])
+                    f.write(URL)
                     f.close
             n += 1
         #END 
