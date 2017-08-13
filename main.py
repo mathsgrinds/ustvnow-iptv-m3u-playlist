@@ -26,9 +26,9 @@ except:
 
 CreateSTRM = False                      # Set if you would like to create the STRM file
 
-quality = "HD"                          # Set the quality either SD or HD
+quality = "SD"                          # Set the quality either SD or HD
 
-ext="ts"                                # Set to either ts or m3u8
+ext="m3u8"                              # Set to either ts or m3u8
 
 ##################################################################################################################
  
@@ -131,5 +131,7 @@ def Ustvnow(user, password):
                     f.close
             n += 1
         #END 
-         
+
 Ustvnow(username, password)
+
+exit()
