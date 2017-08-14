@@ -55,6 +55,7 @@ def Ustvnow(user, password):
         html = html[html.find('var token = "')+len('var token = "'):]
         html = html[:html.find(';')-1]
         token = str(html)
+        token = u' '.join((token,"")).encode('utf-8').strip()
         ### Get Stream ###
         device = "gtv"        
         url = "http://m-api.ustvnow.com/"+device+"/1/live/login"
@@ -69,12 +70,14 @@ def Ustvnow(user, password):
         j = json.loads(html)
         n = 0
         if channel=="ALL":
-            print "#EXTM3U\n"
+            print "#EXTM3U"
         while True:
             # Print Links
             scode = j['results'][n]['scode']
             stream_code = j['results'][n]['stream_code']
+            stream_code = u' '.join((stream_code,"")).encode('utf-8').strip()
             title = j['results'][n]['title']
+            title = u' '.join((title,"")).encode('utf-8').strip()
             url = "http://m.ustvnow.com/stream/1/live/view?scode="+scode+"&token="+token+"&br_n=Firefox&br_v=54&br_d=desktop"
             r = s.get(url)
             html = r.text
@@ -133,5 +136,3 @@ def Ustvnow(user, password):
         #END 
 
 Ustvnow(username, password)
-
-exit()
