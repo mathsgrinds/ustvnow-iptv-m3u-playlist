@@ -19,6 +19,11 @@ python ustvnow-iptv-m3u-playlist.py 'username' 'password' 'CBS';
 
 python ustvnow-iptv-m3u-playlist.py 'username' 'password' 'ALL';
 
+### Get link for ALL stations with strm
+
+
+python ustvnow-iptv-m3u-playlist.py 'username' 'password' 'ALL' 'True';
+
 
 ### Non Command Line Interface
 
