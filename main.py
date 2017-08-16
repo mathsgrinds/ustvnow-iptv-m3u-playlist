@@ -87,7 +87,10 @@ def Ustvnow(username, password):
         if channel=="ALL":
             result += "#EXTM3U\n"
         while True:
-            scode = j['results'][n]['scode']
+            try:
+                scode = j['results'][n]['scode']
+            except:
+                break
             stream_code = j['results'][n]['stream_code']
             title = j['results'][n]['title']
             title = u' '.join((title,"")).encode('utf-8').strip()
