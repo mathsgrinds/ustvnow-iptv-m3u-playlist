@@ -72,6 +72,8 @@ def Ustvnow(username, password):
         if debug:
             print j
         if j['result'] != "success":
+            if debug:
+                print "error"
             return False
         url = "http://m-api.ustvnow.com/gtv/1/live/playingnow?token="+token
         if debug:
@@ -85,7 +87,6 @@ def Ustvnow(username, password):
         if channel=="ALL":
             result += "#EXTM3U\n"
         while True:
-            # Print Links
             scode = j['results'][n]['scode']
             stream_code = j['results'][n]['stream_code']
             title = j['results'][n]['title']
@@ -98,31 +99,32 @@ def Ustvnow(username, password):
             html = r.text
             try:
                 i = json.loads(html)
+                URL = i["stream"].replace("\n","")[:-1]
+                if "&jwt=" in URL:
+                    URL = URL.split("&jwt=")[0]
             except:
                 break
-            if channel=="ALL":
-                result += "#EXTINF:-1,"+stream_code+" - "+title+"\n"
-                #GET LINK for M3U
-                URL = i["stream"].replace("\n","")[:-1]
-                result += URL+"\n"
-            else:
-                if channel==stream_code:
-                    #GET LINK
-                    URL = i["stream"].replace("\n","")[:-1]
-                    result += URL+"\n"
             # Create STRM file
             if(CreateSTRM):
                 fname = stream_code+".strm"
-                #GET LINK
-                URL = i["stream"].replace("\n","")[:-1]
                 if os.path.isfile(fname):
-                    f= open(fname,"w")
+                    f= open(fname,"wb")
                     f.write(URL)
                     f.close
                 else:
-                    f= open(fname,"w+")
+                    f= open(fname,"wb+")
                     f.write(URL)
                     f.close
+            # Print Link
+            if channel=="ALL":
+                result += "#EXTINF:-1,"+stream_code+" - "+title+"\n"
+                result += URL+"\n"
+            else:
+                if debug:
+                    print stream_code
+                if channel==stream_code:
+                    result += URL+"\n"
+                    break
             n += 1
         #END
         return(result)
