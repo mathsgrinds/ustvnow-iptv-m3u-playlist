@@ -34,6 +34,16 @@ except:
 
 ##################################################################################################################
 
+def robust_decode(bs):
+    '''Takes a byte string as param and convert it into a unicode one. First tries UTF8, and fallback to Latin1 if it fails'''
+    bs.decode(errors='replace')
+    cr = None
+    try:
+        cr = bs.decode('utf8')
+    except UnicodeDecodeError:
+        cr = bs.decode('latin1')
+    return cr
+
 def Ustvnow(username, password):
     #START
     result = ""
@@ -120,7 +130,7 @@ def Ustvnow(username, password):
                     f.close
             # Print Link
             if channel=="ALL":
-                result += "#EXTINF:-1,"+stream_code+" - "+title+"\n"
+                result += "#EXTINF:-1,"+robust_decode(stream_code)+" - "+robust_decode(title)+"\n"
                 result += URL+"\n"
             else:
                 if debug:
@@ -130,7 +140,7 @@ def Ustvnow(username, password):
                     break
             n += 1
         #END
-        return(result)
+        return(result.strip("\n"))
 
 ##################################################################################################################
 
@@ -150,4 +160,5 @@ else:
     result = Ustvnow(username, password)
 
 print result
+
 ##################################################################################################################
