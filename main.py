@@ -33,7 +33,12 @@ except:
     CreateSTRM = False                  # Set if you would like to create the STRM file
 
 ##################################################################################################################
+## FUNCTIONS
+##################################################################################################################
 
+###########
+# Decoder #
+###########
 def robust_decode(bs):
     '''Takes a byte string as param and convert it into a unicode one. First tries UTF8, and fallback to Latin1 if it fails'''
     bs.decode(errors='replace')
@@ -44,8 +49,10 @@ def robust_decode(bs):
         cr = bs.decode('latin1')
     return cr
 
-def Ustvnow(username, password):
-    #START
+###########
+# Scraper #
+###########
+def Ustvnow(username, password, exclude=[]):
     result = ""
     with requests.Session() as s:
         ### Get CSRF Token ###       
@@ -130,8 +137,9 @@ def Ustvnow(username, password):
                     f.close
             # Print Link
             if channel=="ALL":
-                result += "#EXTINF:-1,"+robust_decode(stream_code)+" - "+robust_decode(title)+"\n"
-                result += URL+"\n"
+                if robust_decode(stream_code) not in exclude:
+                    result += "#EXTINF:-1,"+robust_decode(stream_code)+" - "+robust_decode(title)+"\n"
+                    result += URL+"\n"
             else:
                 if debug:
                     print stream_code
@@ -139,9 +147,19 @@ def Ustvnow(username, password):
                     result += URL+"\n"
                     break
             n += 1
-        #END
         return(result.strip("\n"))
 
+##################################################################################################################
+## EXCLUDE THESE CHANNELS
+##
+## exclude = ["ABC", "My9" "FOX"] these channels would be excluded from the result
+##
+##################################################################################################################
+
+exclude = []
+
+##################################################################################################################
+## MAIN
 ##################################################################################################################
 
 if(username==""):
@@ -151,13 +169,13 @@ if(username==""):
     for username in usernames:
         try:
             password = username
-            result = Ustvnow(username, password)
+            result = Ustvnow(username, password, exclude)
             if result != False:
                 break #success
         except:
             next #try again
 else:
-    result = Ustvnow(username, password)
+    result = Ustvnow(username, password, exclude)
 
 print result
 
