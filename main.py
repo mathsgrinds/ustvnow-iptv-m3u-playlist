@@ -8,6 +8,7 @@ import sys
 import random
 debug = False
 
+# 22/03/18 - updated file to work with slightly altered api of ustvnow. - MikeC
 ##################################################################################################################
 # CONFIG
 ##################################################################################################################
@@ -119,9 +120,10 @@ def Ustvnow(username, password, exclude=[]):
             html = r.text
             try:
                 i = json.loads(html)
-                URL = i["stream"].replace("\n","")[:-1]
-                if "&jwt=" in URL:
-                    URL = URL.split("&jwt=")[0]
+                #URL = i["stream"].replace("\n","")[:-1]
+                URL = i["stream"]
+                #if "&jwt=" in URL:
+                #    URL = URL.split("&jwt=")[0]
             except:
                 break
             # Create STRM file
