@@ -33,6 +33,11 @@ try:
 except:
     CreateSTRM = False                  # Set if you would like to create the STRM file
 
+try:
+    hideTitle = sys.argv[4]             
+except:
+    hideTitle = True                    # For those of you who would like to hide the showing now show title
+    
 ##################################################################################################################
 ## FUNCTIONS
 ##################################################################################################################
@@ -140,7 +145,10 @@ def Ustvnow(username, password, exclude=[]):
             # Print Link
             if channel=="ALL":
                 if robust_decode(stream_code) not in exclude:
-                    result += "#EXTINF:-1,"+robust_decode(stream_code)+" - "+robust_decode(title)+"\n"
+                    if not hideTitle:
+                        result += "#EXTINF:-1,"+robust_decode(stream_code)+" - "+robust_decode(title)+"\n"
+                    else:
+                        result += "#EXTINF:-1,"+robust_decode(stream_code)+"\n"                        
                     result += URL+"\n"
             else:
                 if debug:
