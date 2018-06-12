@@ -34,7 +34,7 @@ except:
     CreateSTRM = False                  # Set if you would like to create the STRM file
 
 try:
-    hideTitle = sys.argv[4]             
+    hideTitle = sys.argv[5]             
 except:
     hideTitle = True                    # For those of you who would like to hide the showing now show title
     
